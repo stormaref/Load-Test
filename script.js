@@ -2,8 +2,8 @@ import http from "k6/http";
 import { sleep } from "k6";
 
 export let options = {
-  vus: 2,
-  duration: "10s",
+  vus: 480,
+  duration: "60s",
 };
 
 // var userIds = [
@@ -59,6 +59,19 @@ function uuidv4() {
     return v.toString(16);
   });
 }
+
+var addressesUserIds = [
+  "8FA12658-78FB-47D9-A6F7-0F9BD89567E4",
+  "F1D58CF2-1601-40BF-8527-217E28F218F9",
+  "A36DD29D-39D6-4D71-80E6-6CDA7BA3D99C",
+  "633CFB83-2C56-4CAD-A225-841A0F3DE148",
+  "BA5460D0-4FF1-41A3-B52F-89D4F4DD9A49",
+  "9F07BB1E-BB01-4D7E-AD7C-9977D520FF0A",
+  "B96A6E8B-5ED7-4B14-9F06-AE7C69CF7BBD",
+  "EF778EBE-CED5-40D8-A226-DE8A69CECE01",
+  "680FC3DD-B33B-4FA0-83C2-E89F56E5F232",
+  "5025946B-C63A-46DA-BB58-F89C956DA192",
+]
 
 var userIds = [
   "2323e4e6-ef3d-422b-afa2-5718046d4fa2",
@@ -303,7 +316,7 @@ var userIds = [
   "e253cceb-dafe-4349-b3f9-4d88296b1e19",
   "eae6e54b-0fb1-4b12-9d07-ee4618ee5136",
   "ef778ebe-ced5-40d8-a226-de8a69cece01",
-//   "f1d58cf2-1601-40bf-8527-217e28f218f9",
+  //   "f1d58cf2-1601-40bf-8527-217e28f218f9",
 ];
 
 export default function () {
@@ -312,9 +325,9 @@ export default function () {
   var currentdate = new Date();
   var dateTime =
     currentdate.getDate() +
-    "/" +
+    "-" +
     (currentdate.getMonth() + 1) +
-    "/" +
+    "-" +
     currentdate.getFullYear() +
     "T" +
     currentdate.getHours() +
@@ -322,6 +335,8 @@ export default function () {
     currentdate.getMinutes() +
     ":" +
     currentdate.getSeconds();
+
+  dateTime = currentdate.toISOString();
 
   var requestId = uuidv4();
 
@@ -402,11 +417,18 @@ export default function () {
     coordinate: "12.345,24.1234",
   });
 
-  console.log(requestId);
+  // console.log(basket);
+  // console.log(checkout);
+
+  var addressUserId = addressesUserIds[Math.floor(Math.random() * addressesUserIds.length)];
+  var addressUrl = "http://192.168.1.19:8092/api/v1/Addresses/Addresses?customerId=" + addressUserId;
+  console.log(addressUrl);
+  http.get(addressUrl);
+  sleep(1);
 
   http.post("http://192.168.1.19:94/api/v1/basket", basket, params);
   sleep(1);
 
   http.post("http://192.168.1.19:94/api/v1/basket/checkout", checkout, params);
-  sleep(5);
+  sleep(1);
 }
